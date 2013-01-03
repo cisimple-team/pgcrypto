@@ -96,7 +96,7 @@ module PGCrypto
           %[pgp_pub_decrypt("#{PGCrypto::Column.table_name}"."value", pgcrypto_keys.#{key.name}#{key.password?}) AS "value"]
         ].flatten).joins(%[CROSS JOIN (SELECT #{key.dearmored} AS "#{key.name}") AS pgcrypto_keys])
       end
-      pgcrypto_column_finder.where(:name => column_name).first
+      pgcrypto_column_finder.where("#{PGCrypto::Column.table_name}.name = ?", column_name).first
     rescue ActiveRecord::StatementInvalid => e
       case e.message
       when /^PGError: ERROR:  Wrong key or corrupt data/
